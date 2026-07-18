@@ -9,8 +9,8 @@ RUN apk add --no-cache \
   && rm -rf /var/cache/apk/*
 
 WORKDIR /app
-COPY engine/package.json engine/package-lock.json* ./
-RUN npm ci --only=production && npm cache clean --force
+COPY engine/package.json ./
+RUN npm install --only=production && npm cache clean --force
 
 COPY engine/server.js engine/proxy-pool.js engine/anti-detect.js ./
 COPY config/users.json ./config/users.json
