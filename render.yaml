@@ -5,8 +5,6 @@ services:
     dockerfilePath: ./Dockerfile
     dockerContext: .
     envVars:
-      - key: SCYLLA_API_URL
-        value: http://127.0.0.1:8899/api/v1/proxies
       - key: REDIS_URL
         value: redis://127.0.0.1:6379
       - key: PROXY_PORT
