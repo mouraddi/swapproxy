@@ -1,0 +1,19 @@
+{
+  "users": [
+    {
+      "username": "demo",
+      "password": "swapproxy2024",
+      "bandwidth_limit_gb": 10
+    },
+    {
+      "username": "alpha",
+      "password": "alphaSecret!23",
+      "bandwidth_limit_gb": 50
+    },
+    {
+      "username": "beta",
+      "password": "betaPass!78",
+      "bandwidth_limit_gb": 100
+    }
+  ]
+}

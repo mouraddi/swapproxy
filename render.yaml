@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: swaproxy-engine
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    envVars:
+      - key: SCYLLA_API_URL
+        value: http://127.0.0.1:8899/api/v1/proxies
+      - key: REDIS_URL
+        value: redis://127.0.0.1:6379
+      - key: PROXY_PORT
+        value: "3128"
+      - key: REQUEST_TIMEOUT_MS
+        value: "30000"
+      - key: MAX_RETRIES
+        value: "3"
+      - key: BANDWIDTH_RESET_DAYS
+        value: "30"
+      - key: POOL_REFRESH_MS
+        value: "60000"
+    healthCheckPath: /
+    autoDeploy: true

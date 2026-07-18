@@ -1,0 +1,59 @@
+version: "3.8"
+
+services:
+  scylla:
+    image: pablozaiden/swapproxy-checker:latest
+    container_name: swaproxy-scylla
+    ports:
+      - "8899:8899"
+      - "8081:8081"
+    environment:
+      - SCYLLA_API_ENABLED=true
+      - SCYLLA_API_PORT=8899
+      - SCYLLA_PROXY_PORT=8081
+    restart: unless-stopped
+    networks:
+      - swaproxy-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: swaproxy-redis
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --save 60 1
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    networks:
+      - swaproxy-net
+
+  engine:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: swaproxy-engine
+    ports:
+      - "3128:3128"
+    depends_on:
+      - scylla
+      - redis
+    volumes:
+      - ./config/users.json:/app/config/users.json:ro
+    environment:
+      - SCYLLA_API_URL=http://scylla:8899/api/v1/proxies
+      - REDIS_URL=redis://redis:6379
+      - PROXY_PORT=3128
+      - REQUEST_TIMEOUT_MS=30000
+      - MAX_RETRIES=3
+      - BANDWIDTH_RESET_DAYS=30
+      - POOL_REFRESH_MS=60000
+    restart: unless-stopped
+    networks:
+      - swaproxy-net
+
+volumes:
+  redis-data:
+
+networks:
+  swaproxy-net:
+    driver: bridge

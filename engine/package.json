@@ -1,0 +1,14 @@
+{
+  "name": "swapproxy-engine",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Multi-source rotating proxy gateway with health scoring",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "ioredis": "^5.4.1"
+  }
+}
