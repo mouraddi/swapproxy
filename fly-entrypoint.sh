@@ -3,17 +3,14 @@ set -e
 
 echo "[entrypoint] Starting SwapProxy v2..."
 
-# Start Redis
 redis-server --daemonize yes --save "" --appendonly no
 sleep 1
-echo "[entrypoint] Redis started"
+echo "[entrypoint] Redis ready"
 
-# Start Scylla in background
-scylla --port 8899 --proxy-port 8081 --daemon &
-echo "[entrypoint] Scylla started"
+scylla --port 8899 --proxy-port 8081 &
+echo "[entrypoint] Scylla starting..."
 
-# Wait for Scylla API
-for i in $(seq 1 20); do
+for i in $(seq 1 30); do
   if wget -q -O- http://127.0.0.1:8899/api/v1/proxies 2>/dev/null; then
     echo "[entrypoint] Scylla API ready"
     break
@@ -21,5 +18,9 @@ for i in $(seq 1 20); do
   sleep 2
 done
 
-# Start engine
+export SCYLLA_API_URL=http://127.0.0.1:8899/api/v1/proxies
+export REDIS_URL=redis://127.0.0.1:6379
+export PROXY_PORT=3128
+
+echo "[entrypoint] Engine starting..."
 exec node /app/server.js
