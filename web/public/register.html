@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register — SwapProxy</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, 'Segoe UI', sans-serif; background: #0f0f1a; color: #e0e0e0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+.box { background: #1a1a2e; padding: 40px; border-radius: 12px; width: 420px; }
+.box h1 { text-align: center; margin-bottom: 8px; color: #6c63ff; }
+.box .sub { text-align: center; color: #888; margin-bottom: 24px; font-size: 14px; }
+input { width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid #333; border-radius: 6px; background: #0f0f1a; color: #e0e0e0; font-size: 16px; }
+button { width: 100%; padding: 12px; background: #6c63ff; color: #fff; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; }
+button:hover { background: #5a52e0; }
+.error { color: #ff6b6b; margin-bottom: 12px; display: none; }
+.success { color: #51cf66; margin-bottom: 12px; display: none; }
+.links { text-align: center; margin-top: 16px; }
+.links a { color: #6c63ff; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="box">
+  <h1>Get Started</h1>
+  <p class="sub">Free 1GB bandwidth to test the service</p>
+  <div class="error" id="error"></div>
+  <div class="success" id="success">Account created! Redirecting...</div>
+  <form id="form">
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="password" placeholder="Password" required minlength="6">
+    <button type="submit">Create Account</button>
+  </form>
+  <div class="links"><a href="/login.html">Already have an account?</a></div>
+</div>
+<script>
+document.getElementById('form').onsubmit = async (e) => {
+  e.preventDefault();
+  const r = await fetch('/api/register', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({username: username.value, email: email.value, password: password.value})
+  });
+  const d = await r.json();
+  if (d.ok) {
+    document.getElementById('form').style.display = 'none';
+    document.getElementById('success').style.display = 'block';
+    setTimeout(() => window.location.href = '/dashboard.html', 1500);
+  } else {
+    document.getElementById('error').style.display = 'block';
+    document.getElementById('error').textContent = d.error;
+  }
+};
+</script>
+</body>
+</html>

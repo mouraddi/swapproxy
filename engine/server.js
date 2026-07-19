@@ -44,9 +44,11 @@ loadUsers();
 process.on("SIGHUP", loadUsers);
 
 function findUser(username, password) {
-  return authorizedUsers.find(
+  const local = authorizedUsers.find(
     (u) => u.username === username && u.password === password
   );
+  if (local) return local;
+  return null; // Redis users handled in authenticate()
 }
 
 // ---------------------------------------------------------------------------
@@ -115,10 +117,20 @@ function authenticate(req, callback) {
   const idx = decoded.indexOf(":");
   if (idx === -1) return callback(null, "Expected username:password");
 
-  const user = findUser(decoded.substring(0, idx), decoded.substring(idx + 1));
-  if (!user) return callback(null, "Invalid credentials");
+  const username = decoded.substring(0, idx);
+  const password = decoded.substring(idx + 1);
 
-  callback(user);
+  let user = findUser(username, password);
+  if (user) return callback(user);
+
+  // Check Redis for web-registered users
+  redis.hgetall(`user:${username}`).then((stored) => {
+    if (stored && stored.password === password) {
+      callback({ username, password, bandwidth_limit_gb: parseInt(stored.bandwidth_limit_gb || "1") });
+    } else {
+      callback(null, "Invalid credentials");
+    }
+  }).catch(() => callback(null, "Auth error"));
 }
 
 // ---------------------------------------------------------------------------

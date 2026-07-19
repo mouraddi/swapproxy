@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — SwapProxy</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, 'Segoe UI', sans-serif; background: #0f0f1a; color: #e0e0e0; }
+nav { padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; background: #1a1a2e; }
+.logo { font-size: 24px; font-weight: bold; color: #6c63ff; }
+nav button { background: none; border: 1px solid #ff6b6b; color: #ff6b6b; padding: 8px 20px; border-radius: 6px; cursor: pointer; }
+.container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+.card { background: #1a1a2e; border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+.card h2 { margin-bottom: 16px; color: #6c63ff; font-size: 18px; }
+.row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #2a2a3e; }
+.row:last-child { border: none; }
+.label { color: #888; }
+.value { font-family: monospace; font-size: 14px; word-break: break-all; }
+.progress { height: 10px; background: #2a2a3e; border-radius: 5px; margin: 10px 0; overflow: hidden; }
+.progress div { height: 100%; background: #6c63ff; border-radius: 5px; transition: width 0.3s; }
+.code { background: #0f0f1a; padding: 12px; border-radius: 6px; font-family: monospace; font-size: 13px; margin: 8px 0; white-space: pre-wrap; }
+.copy { background: #6c63ff; color: #fff; border: none; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+.loading { text-align: center; padding: 40px; color: #888; }
+@media (max-width: 600px) {
+  nav { padding: 15px 20px; }
+  .container { padding: 20px 10px; }
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">SwapProxy</div>
+  <button onclick="logout()">Logout</button>
+</nav>
+<div class="container" id="loading"><div class="loading">Loading dashboard...</div></div>
+
+<div class="container" id="content" style="display:none">
+  <div class="card">
+    <h2>Your Proxy Credentials</h2>
+    <div class="row"><span class="label">Host</span><span class="value" id="host"></span></div>
+    <div class="row"><span class="label">Port</span><span class="value" id="port"></span></div>
+    <div class="row"><span class="label">Username</span><span class="value" id="user"></span></div>
+    <div class="row"><span class="label">Password</span><span class="value" id="pass"></span></div>
+    <div style="margin-top:12px">
+      <div class="code" id="proxyUrl"></div>
+      <button class="copy" onclick="copyProxy()">Copy Proxy URL</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Bandwidth Usage</h2>
+    <div class="progress"><div id="progressBar" style="width:0%"></div></div>
+    <div class="row"><span class="label">Used</span><span id="used"></span></div>
+    <div class="row"><span class="label">Limit</span><span id="limit"></span></div>
+  </div>
+
+  <div class="card">
+    <h2>Quick Start</h2>
+    <p style="margin-bottom:8px;color:#888">Use this proxy with curl:</p>
+    <div class="code" id="curlCmd"></div>
+    <button class="copy" onclick="copyCurl()">Copy</button>
+  </div>
+</div>
+
+<script>
+async function load() {
+  const r = await fetch('/api/stats');
+  const d = await r.json();
+  if (!d.username) { window.location.href = '/login.html'; return; }
+
+  document.getElementById('host').textContent = d.proxy_host;
+  document.getElementById('port').textContent = d.proxy_port;
+  document.getElementById('user').textContent = d.proxy_user;
+  document.getElementById('pass').textContent = d.proxy_pass;
+  document.getElementById('proxyUrl').textContent =
+    `http://${d.proxy_user}:${d.proxy_pass}@${d.proxy_host}:${d.proxy_port}`;
+
+  const usedGb = (d.bandwidth_used / (1024**3)).toFixed(3);
+  const limitGb = d.bandwidth_limit_gb;
+  document.getElementById('used').textContent = `${usedGb} GB`;
+  document.getElementById('limit').textContent = `${limitGb} GB`;
+  const pct = Math.min(100, (d.bandwidth_used / d.bandwidth_limit) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+
+  document.getElementById('curlCmd').textContent =
+    `curl -x "http://${d.proxy_user}:${d.proxy_pass}@${d.proxy_host}:${d.proxy_port}" https://httpbin.org/ip`;
+
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('content').style.display = 'block';
+}
+
+function copyProxy() {
+  const t = document.getElementById('proxyUrl').textContent;
+  navigator.clipboard.writeText(t);
+}
+function copyCurl() {
+  const t = document.getElementById('curlCmd').textContent;
+  navigator.clipboard.writeText(t);
+}
+async function logout() {
+  await fetch('/api/logout', {method:'POST'});
+  window.location.href = '/login.html';
+}
+load();
+</script>
+</body>
+</html>

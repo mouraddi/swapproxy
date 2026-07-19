@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SwapProxy — Rotating Proxy Service</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, 'Segoe UI', sans-serif; background: #0f0f1a; color: #e0e0e0; min-height: 100vh; }
+nav { padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; background: #1a1a2e; }
+nav .logo { font-size: 24px; font-weight: bold; color: #6c63ff; }
+nav a { color: #e0e0e0; text-decoration: none; margin-left: 20px; padding: 8px 20px; border-radius: 6px; }
+nav a:hover { color: #6c63ff; }
+nav .btn { background: #6c63ff; color: #fff; }
+.hero { text-align: center; padding: 100px 20px; max-width: 800px; margin: 0 auto; }
+.hero h1 { font-size: 48px; margin-bottom: 20px; }
+.hero h1 span { color: #6c63ff; }
+.hero p { font-size: 18px; color: #888; line-height: 1.6; margin-bottom: 30px; }
+.hero .btn { display: inline-block; background: #6c63ff; color: #fff; padding: 14px 40px; border-radius: 8px; text-decoration: none; font-size: 18px; }
+.features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; padding: 60px 40px; max-width: 1100px; margin: 0 auto; }
+.feature { background: #1a1a2e; padding: 30px; border-radius: 12px; text-align: center; }
+.feature h3 { margin-bottom: 10px; color: #6c63ff; }
+.feature p { color: #888; font-size: 14px; }
+footer { text-align: center; padding: 40px; color: #555; }
+@media (max-width: 600px) {
+  nav { flex-direction: column; gap: 10px; }
+  .hero h1 { font-size: 28px; }
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo">SwapProxy</div>
+  <div>
+    <a href="/login.html">Login</a>
+    <a href="/register.html" class="btn">Get Started</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>Rotating <span>Proxy</span> Service</h1>
+  <p>Every request gets a different IP. Bypass blocks, scrape data, and stay anonymous. Free tier available.</p>
+  <a href="/register.html" class="btn">Create Free Account</a>
+</div>
+
+<div class="features">
+  <div class="feature">
+    <h3>🔄 Auto Rotation</h3>
+    <p>New IP for every request — no more getting blocked.</p>
+  </div>
+  <div class="feature">
+    <h3>🌍 Global IPs</h3>
+    <p>Thousands of proxies from different countries.</p>
+  </div>
+  <div class="feature">
+    <h3>⚡ Fast & Reliable</h3>
+    <p>Auto fallback if a proxy fails — your request always completes.</p>
+  </div>
+</div>
+
+<footer>SwapProxy &copy; 2026</footer>
+</body>
+</html>
