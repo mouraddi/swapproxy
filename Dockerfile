@@ -17,6 +17,6 @@ COPY fly-entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh
 
-EXPOSE 3128 8080
+EXPOSE 8080 3128
 
 ENTRYPOINT ["/entrypoint.sh"]
